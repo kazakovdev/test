@@ -1,0 +1,85 @@
+import requests
+import json
+import time
+import datetime
+import concurrent.futures as pool
+import threading
+from threading import Lock
+
+#terr_id = 10
+#date = '2023-05-01'
+def go(terr_id, d):
+    a = {}
+
+
+    dates = ['2023-06-01', '2023-05-01','2023-04-01','2023-03-01','2023-02-01','2023-01-01','2022-01-01','2022-02-01','2022-03-01',
+             '2022-04-01','2022-05-01','2022-06-01','2022-07-01','2022-08-01','2022-09-01','2022-10-01','2022-11-01','2022-12-01',
+    '2021-01-01','2021-02-01','2021-03-01',
+             '2021-04-01','2021-05-01','2021-06-01','2021-07-01','2021-08-01','2021-09-01','2021-10-01','2021-11-01','2021-12-01',
+    #         '2020-01-01', '2020-02-01', '2020-03-01',
+    #         '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-09-01', '2020-10-01',
+    #         '2020-11-01', '2020-12-01'
+             ]
+    headers = {
+    'Accept-Encoding': 'gzip, deflate',
+    'Accept-Language': 'en-US,en;q=0.9,ru-RU;q=0.8,ru;q=0.7,be;q=0.6',
+    'Cache-Control': 'max-age=0',
+    'Connection': 'keep-alive'
+ #   'Cookie': 'session-cookie-mdc=1766bd351f3104714dc04f5fbeb261f52dc5f64c82c1ab749a47f50b61551f2529ba4533717fb3d7d1d274d82e78b1eb; csrf-token-name=csrftoken_mdc; ru.krista.bi.security.esia.auth.age=DWfr2VZLjee2lOrYNqydD6TU0N0IMWyHGBiesu1MXaw; ru.krista.bi.security.esia.auth.id=FDzTgCB5G0_-aI1UCY5KNdI0Z12KiFYQX_6bOU9AYYGbQjdoaJRdOYvazk5ybp81JNvaNszj17rjFmovxNe2OyZL2E-FUTi5N5ZShIdUXv0ApnOxNzQdnT1b_xkYLsOrYFov8iLi4WbjBpQi8ETETU3tEKfR6TyxxzmPuKluky3CPw0msy0RUeJVQ9zUKkZ_wy9F206ycMEx0cUj0l49crZ0jI6eUBM5-52Q67eZJJVtGHs4PAWybTdh6L4mKGDYcZtFy0yv0EZc6v-NVl8M7JtxWSiijkNMQrNBgQmt0jjmGxcN7h7cBMwXzBj1btkNgKrO73R3vCiMqm1pzybpt8U6EKnPhuxrZOUMJKxTZUbaVSgyrNTPEON7nTRkHNYdrciY9vN6GAUFhNIojHOVgc3GFE2VEuCs2NsxYFWzp1fn13uX93Ve7dyKdd8KdCUr-9t-Km4kJxxwTfElABpe_msPUDU0MXrvSbLAAvqc9AUGHooNLCgOJAmnzMdgVGpV4wqv7roCqcm0974UvTlwKNZ7B2WR9VLb1mruJipoYDzjslO0oqaQxADV2fDdO0gFJ0q3sUEXnXTEqsK4rotv2w.U8PT4NnvwBPAuQAtY5dIo40MiFATsM3InB-4qe0AXcxp5uZsnGI8CIfpUwYD39b2FsbrQM-oEsvysd4AcY2DNKk8NLe8edO1et1rq0xaZkp0WI0BEemK5dPVty8e0MGIz0tgplII1SYTMahzUEN-kYInpB5HhNNNOaC77sXvizz8gTZgHWSnqYSulso04t71i2OhsKExPQo2kK1EOHoYIqgRnH3Xy5OXHEE7SX1nCvVZ63Do03BM0vMbCvZGUevmSfAz2k6Dvo6rMAvdRhHm5AD8HWCv-FYPko69ZS65Y3ojHvws3Bvepg4FrVqzwH-1.eRtYC0-Tkp7dW0wCprznDTtznWoFJP69HCFLBOtasPnWUWM-f_6E9dvaT5BHqLcMuBnoFXEovRO5yCwiVGExWJabUfYOneTbF9Vmr-tbj3ZomZlurg1sulxgqUQAX0kz0y37P0HB5Y3EGnpuySjEhsZFXl-QwpoMdYRLhIJ7y6w; JBISESSIONID=S1ohRRcBxK7ijWLo7WVyl44N3oLtAs4F3tT7r97i.obi1; csrf-token-value=1766bef3ac69acc19c0fcf433be4e445011cbf33d3dbcdb259877c4dfa0ed8646ce020b09e587c31'
+    ,'DNT': '1'
+    ,'Host': 'ka.egisso.ru',
+    'Upgrade-Insecure-Requests': '1',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
+
+    }
+
+    # terr_id_list = [x for x in range(0, 200)]
+    # for terr_id in terr_id_list:
+    a = {}
+    for date in dates[::]:
+        print('load ', date, terr_id)
+        #print(f"http://ka.egisso.ru/reporting/Data?uuid=50fe5856-1e78-4634-825b-df77910ff10c&dataVersion=16.02.2021%2005.12.21.208&dsCode=gridData&paramPeriod={date}T00%3A00%3A00.000Z&paramPeriodicity=-1&territory={terr_id}&paramONMSZ=-1&paramMSP=201%2C202%2C203%2C204&_dc=1686244502357")
+        while True:
+            try:
+                response = requests.get(f"http://ka.egisso.ru/reporting/Data?uuid=50fe5856-1e78-4634-825b-df77910ff10c&dataVersion=16.02.2021%2005.12.21.208&dsCode=gridData&paramPeriod={date}T00%3A00%3A00.000Z&paramPeriodicity=-1&territory={terr_id}&paramONMSZ=-1&-1&paramMSP={d}", headers=headers) #701%2C702%2C703%2C704%2C705%2C706%2C707%2C708%2C709&_dc=1686440379391
+                if response.status_code == 200:
+                    break
+            except:
+                print('error, sleep...')
+                time.sleep(20)
+                continue
+
+
+        data_json = json.loads(response.text)
+        if not data_json['data']:
+            print('there is no territory ', terr_id)
+            break
+        data_json.update({'region_id': terr_id, 'date': date})
+        a.update({date: data_json})
+        print(data_json)
+        time.sleep(10)
+    with open(f'out_{terr_id}_{int(datetime.datetime.now().timestamp())}.json', 'w') as f:
+        json.dump(a, f, ensure_ascii=False)
+
+db = ['501%2C502%2C503%2C504%2C505%2C506%2C507%2C508%2C508&_dc=1687112371419',
+          '701%2C702%2C703%2C704%2C705%2C706%2C707%2C708%2C709&_dc=1687112403262',
+          '601%2C602%2C603%2C604%2C605&_dc=1687112440844',
+          '1301%2C1302%2C1303&_dc=1687112488177',
+          '1101%2C1102%2C1103%2C1104%2C1105%2C1106%2C1107%2C1108&_dc=1687112521980',
+          '1001%2C1002%2C1003%2C1004%2C1005%2C1006&_dc=1687112554660',
+          '1401%2C1402%2C1403%2C1404&_dc=1687112596510',
+          '1501%2C1502%2C1503%2C1504%2C1505&_dc=1687112629255',
+          '1601%2C1602&_dc=1687112660176',
+          '301%2C302%2C303%2C304&_dc=1687112690984',
+          '201%2C202%2C203%2C204&_dc=1687144625971',
+          '901%2C902%2C903%2C904&_dc=1687144688446']
+
+executor = pool.ThreadPoolExecutor(max_workers=5)
+
+for d in db:
+    print('START DASHBOARD: ', d)
+    for i in range(-1,100):
+        executor.submit(go, i, d)
+    #print(1)
+
+print(2)
